@@ -1,15 +1,20 @@
 import java.util.ArrayList;
+import java.lang.Math;
 
 public class Deck {
     private ArrayList<Card> cards;
     private int cardsLeft;
 
-    public Deck(char[] rank, String[]suit, int[]point) {
+    public Deck(char[] ranks, String[] suits, int[] points) {
         cards = new ArrayList<Card>();
-        // DON'T KNOW HOW TO YET
-        for (int i = 0; i < 5; i++) {
-            Card newCard = new Card(rank[i], suit[i], point[i]);
-            cards.add(newCard);
+        for (char rank : ranks) {
+            for (String suit : suits) {
+                for (int point : points) {
+                    Card newCard = new Card(rank, suit, point);
+                    cards.add(newCard);
+                    cardsLeft++;
+                }
+            }
         }
     }
 
@@ -22,7 +27,20 @@ public class Deck {
     }
 
     public Card deal() {
-        // LEFT OFF HERE
-        return null;
+        if (cards.isEmpty()) {
+            return null;
+        }
+        cardsLeft--;
+        return cards.get(cardsLeft);
+    }
+
+    public void shuffle(){
+        for (int i = cardsLeft; i > 0; i--) {
+            int random = (int) (Math.random() * i);
+            Card temp = cards.get(random);
+            cards.set(random, cards.get(i));
+            cards.set(i, temp);
+        }
+        cardsLeft = cards.size();
     }
 }
