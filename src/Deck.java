@@ -7,15 +7,15 @@ public class Deck {
 
     public Deck(char[] ranks, String[] suits, int[] points) {
         cards = new ArrayList<Card>();
-        for (char rank : ranks) {
+        // Two is the number of suits and ranks
+        for (int i = 0; i < 2; i++) {
             for (String suit : suits) {
-                for (int point : points) {
-                    Card newCard = new Card(rank, suit, point);
+                    Card newCard = new Card(ranks[i], suit, points[i]);
                     cards.add(newCard);
                     cardsLeft++;
-                }
             }
         }
+        shuffle();
     }
 
     public boolean isEmpty() {
