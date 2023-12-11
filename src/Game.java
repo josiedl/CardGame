@@ -48,7 +48,8 @@ public class Game {
                 "\n      ∆ If no, they will respond \"Go Fish!\"---then you must draw a card" +
                 "\n∆ Play until there are no cards left in play (every card should have a pair)" +
                 "\n∆ Whoever has the most pairs wins!" +
-                "\n∆ Have fun!");
+                "\n∆ Have fun!" +
+                "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
     public boolean hasCard(Player player, String guess) {
@@ -59,36 +60,63 @@ public class Game {
         }
         return false;
     }
+
     // Play Game Function
     public void playGame() {
         printInstructions();
-        // Create a variable to keep track of who's turn it is
+        // Initialize a variable to keep track of who's turn it is
         int turn = 1;
         // While there are cards still in play (cards in the deck or in either players hand)
         while (!(deck.isEmpty()) || !(player1.getHand().isEmpty()) || !(player2.getHand().isEmpty())) {
             if (turn % 2 == 1) {
                 Scanner input = new Scanner(System.in);
-                System.out.print("Player 1's turn: Do you have a ");
+                System.out.print(player1.getName() + "'s turn: Do you have a ");
                 String guess = input.nextLine();
                 if (hasCard(player2, guess)) {
                     player1.addPoints(1);
+                    for (int i = 0; i < player1.getHand().size(); i++) {
+                        if (player1.getHand().get(i).getSuit().equals(guess)) {
+                            player1.getHand().remove(player1.getHand().get(i));
+                        }
+                    }
+                    for (int i = 0; i < player2.getHand().size(); i++) {
+                        if (player2.getHand().get(i).getSuit().equals(guess)) {
+                            player2.getHand().remove(player2.getHand().get(i));
+                        }
+                    }
+                    System.out.println(player2.getName() + ": Yes");
                 } else {
-                    System.out.println("Go Fish!");
+                    System.out.println(player2.getName() + ": Go Fish!");
                     player1.getHand().add(deck.deal());
                     turn++;
                 }
+                System.out.println(player1.getName() + "'s points: " + player1.getPoints());
+                System.out.println(player2.getName() + "'s points: " + player2.getPoints());
             }
             else {
                 Scanner input = new Scanner(System.in);
-                System.out.print("Player 2's turn: Do you have a ");
+                System.out.print(player2.getName() + "'s turn: Do you have a ");
                 String guess = input.nextLine();
                 if (hasCard(player1, guess)) {
                     player2.addPoints(1);
+                    for (int i = 0; i < player1.getHand().size(); i++) {
+                        if (player1.getHand().get(i).getSuit().equals(guess)) {
+                            player1.getHand().remove(player1.getHand().get(i));
+                        }
+                    }
+                    for (int i = 0; i < player2.getHand().size(); i++) {
+                        if (player2.getHand().get(i).getSuit().equals(guess)) {
+                            player2.getHand().remove(player2.getHand().get(i));
+                        }
+                    }
+                    System.out.println(player1.getName() + ": Yes");
                 } else {
-                    System.out.println("Go Fish!");
+                    System.out.println(player1.getName() + ": Go Fish!");
                     player2.getHand().add(deck.deal());
                     turn++;
                 }
+                System.out.println(player1.getName() + "'s points: " + player1.getPoints());
+                System.out.println(player2.getName() + "'s points: " + player2.getPoints());
             }
         }
     }
