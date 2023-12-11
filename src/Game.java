@@ -61,6 +61,10 @@ public class Game {
         return false;
     }
 
+//    public void turn(Player player) {
+//
+//    }
+
     // Play Game Function
     public void playGame() {
         printInstructions();
@@ -69,6 +73,7 @@ public class Game {
         // While there are cards still in play (cards in the deck or in either players hand)
         while (!(deck.isEmpty()) || !(player1.getHand().isEmpty()) || !(player2.getHand().isEmpty())) {
             if (turn % 2 == 1) {
+                System.out.println(player1.getHand());
                 Scanner input = new Scanner(System.in);
                 System.out.print(player1.getName() + "'s turn: Do you have a ");
                 String guess = input.nextLine();
@@ -94,6 +99,7 @@ public class Game {
                 System.out.println(player2.getName() + "'s points: " + player2.getPoints());
             }
             else {
+                System.out.println(player2.getHand());
                 Scanner input = new Scanner(System.in);
                 System.out.print(player2.getName() + "'s turn: Do you have a ");
                 String guess = input.nextLine();
