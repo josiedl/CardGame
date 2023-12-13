@@ -26,6 +26,7 @@ public class Game {
         // Create a hand for each player
         ArrayList<Card> hand1 = new ArrayList<Card>();
         ArrayList<Card> hand2 = new ArrayList<Card>();
+
         // Deal 5 cards per hand
         for (int i = 0; i < 5; i++) {
             hand1.add(deck.deal());
@@ -67,13 +68,37 @@ public class Game {
 
     // Play Game Function
     public void playGame() {
+        // Print instructions
         printInstructions();
+
+        // Check for pairs in initial hands and remove them
+        for (int i = 0; i < player1.getHand().size(); i++) {
+            for (int j = 0; j < player1.getHand().size(); j++) {
+                if (player1.getHand().get(i).getSuit().equals(player1.getHand().get(j).getSuit()) && i != j) {
+                    player1.getHand().remove(player1.getHand().get(i));
+                    player1.getHand().remove(player1.getHand().get(j));
+                    player1.addPoints(1);
+                }
+            }
+        }
+        for (int i = 0; i < player2.getHand().size(); i++) {
+            for (int j = 0; j < player2.getHand().size(); j++) {
+                if (player2.getHand().get(i).getSuit().equals(player2.getHand().get(j).getSuit()) && i != j) {
+                    player2.getHand().remove(player2.getHand().get(i));
+                    player2.getHand().remove(player2.getHand().get(j));
+                    player2.addPoints(1);
+                }
+            }
+        }
+
         // Initialize a variable to keep track of who's turn it is
         int turn = 1;
         // While there are cards still in play (cards in the deck or in either players hand)
         while (!(deck.isEmpty()) || !(player1.getHand().isEmpty()) || !(player2.getHand().isEmpty())) {
             if (turn % 2 == 1) {
-                System.out.println(player1.getHand());
+                for (int i = 0; i < player1.getHand().size(); i++) {
+                    System.out.println(player1.getHand().get(i).getSuit());
+                }
                 Scanner input = new Scanner(System.in);
                 System.out.print(player1.getName() + "'s turn: Do you have a ");
                 String guess = input.nextLine();
@@ -92,14 +117,27 @@ public class Game {
                     System.out.println(player2.getName() + ": Yes");
                 } else {
                     System.out.println(player2.getName() + ": Go Fish!");
-                    player1.getHand().add(deck.deal());
+                    Card card = deck.deal();
+                    for (int i = 0; i < player1.getHand().size(); i++) {
+                        if (card.getSuit().equals(player1.getHand().get(i).getSuit())) {
+                            player1.getHand().remove(player1.getHand().get(i));
+                            player1.addPoints(1);
+                        }
+                        else {
+                            player1.getHand().add(card);
+                            // Check if that card is already in the hand
+                            break;
+                        }
+                    }
                     turn++;
                 }
                 System.out.println(player1.getName() + "'s points: " + player1.getPoints());
                 System.out.println(player2.getName() + "'s points: " + player2.getPoints());
             }
             else {
-                System.out.println(player2.getHand());
+                for (int i = 0; i < player2.getHand().size(); i++) {
+                    System.out.println(player2.getHand().get(i).getSuit());
+                }
                 Scanner input = new Scanner(System.in);
                 System.out.print(player2.getName() + "'s turn: Do you have a ");
                 String guess = input.nextLine();
@@ -118,12 +156,24 @@ public class Game {
                     System.out.println(player1.getName() + ": Yes");
                 } else {
                     System.out.println(player1.getName() + ": Go Fish!");
-                    player2.getHand().add(deck.deal());
+                    Card card = deck.deal();
+                    for (int i = 0; i < player2.getHand().size(); i++) {
+                        if (card.getSuit().equals(player2.getHand().get(i).getSuit())) {
+                            player2.getHand().remove(player2.getHand().get(i));
+                            player2.addPoints(1);
+                        }
+                        else {
+                            player2.getHand().add(card);
+                            // Check if that card is already in hand
+                            break;
+                        }
+                    }
                     turn++;
                 }
                 System.out.println(player1.getName() + "'s points: " + player1.getPoints());
                 System.out.println(player2.getName() + "'s points: " + player2.getPoints());
             }
+            System.out.print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         }
     }
 
