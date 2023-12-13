@@ -62,9 +62,36 @@ public class Game {
         return false;
     }
 
-//    public void turn(Player player) {
-//
-//    }
+    public static void removeInitialPairs(Player player) {
+        for (int i = 0; i < player.getHand().size(); i++) {
+            for (int j = 0; j < player.getHand().size(); j++) {
+                if (player.getHand().get(i).getSuit().equals(player.getHand().get(j).getSuit()) && i != j) {
+                    player.getHand().remove(player.getHand().get(i));
+                    player.getHand().remove(player.getHand().get(j));
+                    player.addPoints(1);
+                    i++;
+                    j++;
+                }
+            }
+        }
+    }
+
+    public void printPoints() {
+        System.out.println(player1.getName() + "'s points: " + player1.getPoints());
+        System.out.println(player2.getName() + "'s points: " + player2.getPoints());
+    }
+
+    public String pickWinner() {
+        if (player1.getPoints() > player2.getPoints()) {
+            return player1.getName();
+        }
+        else if (player1.getPoints() == player2.getPoints()) {
+            return "tie";
+        }
+        else {
+            return player2.getName();
+        }
+    }
 
     // Play Game Function
     public void playGame() {
@@ -72,30 +99,15 @@ public class Game {
         printInstructions();
 
         // Check for pairs in initial hands and remove them
-        for (int i = 0; i < player1.getHand().size(); i++) {
-            for (int j = 0; j < player1.getHand().size(); j++) {
-                if (player1.getHand().get(i).getSuit().equals(player1.getHand().get(j).getSuit()) && i != j) {
-                    player1.getHand().remove(player1.getHand().get(i));
-                    player1.getHand().remove(player1.getHand().get(j));
-                    player1.addPoints(1);
-                }
-            }
-        }
-        for (int i = 0; i < player2.getHand().size(); i++) {
-            for (int j = 0; j < player2.getHand().size(); j++) {
-                if (player2.getHand().get(i).getSuit().equals(player2.getHand().get(j).getSuit()) && i != j) {
-                    player2.getHand().remove(player2.getHand().get(i));
-                    player2.getHand().remove(player2.getHand().get(j));
-                    player2.addPoints(1);
-                }
-            }
-        }
+        removeInitialPairs(player1);
+        removeInitialPairs(player2);
 
         // Initialize a variable to keep track of who's turn it is
         int turn = 1;
         // While there are cards still in play (cards in the deck or in either players hand)
         while (!(deck.isEmpty()) || !(player1.getHand().isEmpty()) || !(player2.getHand().isEmpty())) {
             if (turn % 2 == 1) {
+                printPoints();
                 for (int i = 0; i < player1.getHand().size(); i++) {
                     System.out.println(player1.getHand().get(i).getSuit());
                 }
@@ -125,16 +137,23 @@ public class Game {
                         }
                         else {
                             player1.getHand().add(card);
-                            // Check if that card is already in the hand
+                            for (int j = 0; j < player1.getHand().size(); j++) {
+                                Card tempCard = player1.getHand().get(j);
+                                if (tempCard.getSuit().equals(card.getSuit()) && tempCard.getRank() != card.getRank()) {
+                                    player1.getHand().remove(j);
+                                    player1.getHand().remove(card);
+                                    player1.addPoints(1);
+                                    break;
+                                }
+                            }
                             break;
                         }
                     }
                     turn++;
                 }
-                System.out.println(player1.getName() + "'s points: " + player1.getPoints());
-                System.out.println(player2.getName() + "'s points: " + player2.getPoints());
             }
             else {
+                printPoints();
                 for (int i = 0; i < player2.getHand().size(); i++) {
                     System.out.println(player2.getHand().get(i).getSuit());
                 }
@@ -164,14 +183,20 @@ public class Game {
                         }
                         else {
                             player2.getHand().add(card);
-                            // Check if that card is already in hand
+                            for (int j = 0; j < player2.getHand().size(); j++) {
+                                Card tempCard = player2.getHand().get(j);
+                                if (tempCard.getSuit().equals(card.getSuit()) && tempCard.getRank() != card.getRank()) {
+                                    player2.getHand().remove(j);
+                                    player2.getHand().remove(card);
+                                    player2.addPoints(1);
+                                    break;
+                                }
+                            }
                             break;
                         }
                     }
                     turn++;
                 }
-                System.out.println(player1.getName() + "'s points: " + player1.getPoints());
-                System.out.println(player2.getName() + "'s points: " + player2.getPoints());
             }
             System.out.print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         }
