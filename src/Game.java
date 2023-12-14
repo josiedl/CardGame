@@ -53,13 +53,21 @@ public class Game {
                 "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
-    public boolean hasCard(Player player, String guess) {
+    public boolean hasCard(Player player, String card) {
         for (int i = 0; i < player.getHand().size(); i++) {
-            if (guess.equals(player.getHand().get(i).getSuit())) {
+            if (card.equals(player.getHand().get(i).getSuit())) {
                 return true;
             }
         }
         return false;
+    }
+
+    public void removeCard(Player player, String card) {
+        for (int i = 0; i < player.getHand().size(); i++) {
+            if (player.getHand().get(i).getSuit().equals(card)) {
+                player.getHand().remove(player.getHand().get(i));
+            }
+        }
     }
 
     public static void removeInitialPairs(Player player) {
@@ -67,10 +75,11 @@ public class Game {
             for (int j = 0; j < player.getHand().size(); j++) {
                 if (player.getHand().get(i).getSuit().equals(player.getHand().get(j).getSuit()) && i != j) {
                     player.getHand().remove(player.getHand().get(i));
-                    player.getHand().remove(player.getHand().get(j));
+                    player.getHand().remove(player.getHand().get(j - 1));
                     player.addPoints(1);
-                    i++;
-                    j++;
+//                    i++;
+//                    j++;
+                    break;
                 }
             }
         }
@@ -108,6 +117,12 @@ public class Game {
         }
     }
 
+    public void drawCard(Player player) {
+        if (!deck.isEmpty()) {
+            player.getHand().add(deck.deal());
+        }
+    }
+
     // Play Game Function
     public void playGame() {
         // Print instructions
@@ -142,60 +157,36 @@ public class Game {
                     // Add point to player1's score
                     player1.addPoints(1);
                     // Remove card from player1's hand
-                    for (int i = 0; i < player1.getHand().size(); i++) {
-                        if (player1.getHand().get(i).getSuit().equals(guess)) {
-                            player1.getHand().remove(player1.getHand().get(i));
-                        }
-                    }
+                    removeCard(player1, guess);
                     // Remove card from player2's hand
-                    for (int i = 0; i < player2.getHand().size(); i++) {
-                        if (player2.getHand().get(i).getSuit().equals(guess)) {
-                            player2.getHand().remove(player2.getHand().get(i));
-                        }
-                    }
+                    removeCard(player2, guess);
+                    // Deal cards back to each player, so they still have 5 cards
+                    drawCard(player1);
+                    drawCard(player2);
+                    // Remove any pairs that are made when cards are drawn
+                    removeInitialPairs(player1);
+                    removeInitialPairs(player2);
                 // If player2 doesn't have the guess, player1 must draw a card
                 } else {
-                    // Player2 responds go fish indicating to draw a card
+                    // Player2 responds "go fish" indicating to draw a card
                     System.out.println(player2.getName() + ": Go Fish!");
-                    // If the deck isn't empty
-                    if (!deck.isEmpty()) {
+                    // While player1 has less than 5 cards, and the deck is not empty
+                    while (player1.getHand().size() < 5 && !deck.isEmpty()) {
                         // Deal a card
                         Card card = deck.deal();
-                        // Traverse player1's hand
-                        for (int i = 0; i < player1.getHand().size(); i++) {
-                            // If the new card matches any of their preexisting card
-                            if (card.getSuit().equals(player1.getHand().get(i).getSuit())) {
-                                // Remove the matching card
-                                player1.getHand().remove(player1.getHand().get(i));
-                                // Give player1 a point
-                                player1.addPoints(1);
-                            }
-                            // If it doesn't match
-                            else {
-                                // Add the new card to player1's hand
-                                player1.getHand().add(card);
-                                for (int j = 0; j < player1.getHand().size(); j++) {
-                                    Card tempCard = player1.getHand().get(j);
-                                    if (tempCard.getSuit().equals(card.getSuit()) && tempCard.getRank() != card.getRank()) {
-                                        player1.getHand().remove(j);
-                                        player1.getHand().remove(card);
-                                        player1.addPoints(1);
-                                        break;
-                                    }
-                                }
-                                break;
-                            }
+                        // If player1 already has that card
+                        if (hasCard(player1, card.getSuit())) {
+                            // Remove it and count it as a new pair
+                            removeCard(player1, card.getSuit());
+                            player1.addPoints(1);
+                        }
+                        // Otherwise, just add the card to their hand
+                        else {
+                            player1.getHand().add(card);
                         }
                     }
+                    // Go to next player's turn
                     turn++;
-                    if (hasEmptyHand(player1)) {
-                        dealNewHand(player1);
-                        removeInitialPairs(player1);
-                    }
-                    if (hasEmptyHand(player2)) {
-                        dealNewHand(player2);
-                        removeInitialPairs(player2);
-                    }
                 }
             }
             else {
@@ -207,51 +198,35 @@ public class Game {
                 System.out.print("\n" + player2.getName() + "'s turn: Do you have a ");
                 String guess = input.nextLine();
                 if (hasCard(player1, guess)) {
-                    player2.addPoints(1);
-                    for (int i = 0; i < player1.getHand().size(); i++) {
-                        if (player1.getHand().get(i).getSuit().equals(guess)) {
-                            player1.getHand().remove(player1.getHand().get(i));
-                        }
-                    }
-                    for (int i = 0; i < player2.getHand().size(); i++) {
-                        if (player2.getHand().get(i).getSuit().equals(guess)) {
-                            player2.getHand().remove(player2.getHand().get(i));
-                        }
-                    }
                     System.out.println(player1.getName() + ": Yes");
-                } else {
+                    player2.addPoints(1);
+                    // Remove card from player1's hand
+                    removeCard(player1, guess);
+                    // Remove card from player2's hand
+                    removeCard(player2, guess);
+                    drawCard(player1);
+                    drawCard(player2);
+                    removeInitialPairs(player1);
+                    removeInitialPairs(player2);
+                }
+                else {
                     System.out.println(player1.getName() + ": Go Fish!");
-                    if (!deck.isEmpty()) {
+                    // While player2 has less than 5 cards, and the deck is not empty
+                    while (player2.getHand().size() < 5 && !deck.isEmpty()) {
+                        // Deal a card
                         Card card = deck.deal();
-                        for (int i = 0; i < player2.getHand().size(); i++) {
-                            if (card.getSuit().equals(player2.getHand().get(i).getSuit())) {
-                                player2.getHand().remove(player2.getHand().get(i));
-                                player2.addPoints(1);
-                            }
-                            else {
-                                player2.getHand().add(card);
-                                for (int j = 0; j < player2.getHand().size(); j++) {
-                                    Card tempCard = player2.getHand().get(j);
-                                    if (tempCard.getSuit().equals(card.getSuit()) && tempCard.getRank() != card.getRank()) {
-                                        player2.getHand().remove(j);
-                                        player2.getHand().remove(card);
-                                        player2.addPoints(1);
-                                        break;
-                                    }
-                                }
-                                break;
-                            }
+                        // If player1 already has that card
+                        if (hasCard(player2, card.getSuit())) {
+                            // Remove it and count it as a new pair
+                            removeCard(player2, card.getSuit());
+                            player2.addPoints(1);
+                        }
+                        // Otherwise, just add the card to their hand
+                        else {
+                            player2.getHand().add(card);
                         }
                     }
                     turn++;
-                    if (hasEmptyHand(player1)) {
-                        dealNewHand(player1);
-                        removeInitialPairs(player1);
-                    }
-                    if (hasEmptyHand(player2)) {
-                        dealNewHand(player2);
-                        removeInitialPairs(player2);
-                    }
                 }
             }
             System.out.print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
