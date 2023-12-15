@@ -1,29 +1,38 @@
+// GoFish! by Josie Lee
+
+// Import Scanner and ArrayList classes
 import java.util.Scanner;
 import java.util.ArrayList;
 
+// Game class
 public class Game {
-    // Instance Variables
+    // Declare instance variables
     private Player player1;
     private Player player2;
     private Deck deck;
 
     // Constructor
     public Game() {
+        // Initialize ranks array
         char[] ranks = {'1', '2'};
+        // Initialize suits of fish array
         String[] suits = {"yellow tang", "angelfish", "purple tang",
                             "clownfish", "angler fish", "swordfish", "whale",
                                 "shark", "seahorse", "dolphin", "jellyfish",
                                     "flounder", "octopus"};
+        // Initialize points array
         int[] points = {1, 1};
+        // Create a new deck with the cards for GoFish
         deck = new Deck(ranks, suits, points);
 
+        // Prompt users for names
         Scanner input = new Scanner(System.in);
         System.out.print("Player 1 enter a name: ");
         String name1 = input.nextLine();
         System.out.print("Player 2 enter a name: ");
         String name2 = input.nextLine();
 
-        // Create a hand for each player
+        // Create hands for each player
         ArrayList<Card> hand1 = new ArrayList<Card>();
         ArrayList<Card> hand2 = new ArrayList<Card>();
 
@@ -33,75 +42,91 @@ public class Game {
             hand2.add(deck.deal());
         }
 
+        // Create two players
         player1 = new Player(name1, hand1);
         player2 = new Player(name2, hand2);
     }
 
-    // Prints the instructions
-    public void printInstructions() {
+    // Prints the instructions for GoFish
+    public static void printInstructions() {
         System.out.println("~~~~~~~~~~ How to Play GoFish ~~~~~~~~~~" +
-                "\n∆ Each player starts with a hand of 5 cards" +
+                "\n∆ Each player starts with a hand of 5 cards no matter what (players draw until they get 5 cards with no pairs)" +
                 "\n∆ The objective of the game is to collect the most pairs" +
                 "\n   ∆ Collect pairs by creating matches of the same fish" +
                 "\n∆ Take turns asking each other if they have a card you want" +
                 "\n   ∆ ex: \"Do you have a...?\"" +
                 "\n      ∆ If yes, they must give you that card, you may create a pair, and then you may continue asking for cards until they respond no" +
+                "\n         ∆ Players draw cards whenever a card is used (you may get lucky and make a pair!)" +
                 "\n      ∆ If no, they will respond \"Go Fish!\"---then you must draw a card" +
-                "\n∆ Play until there are no cards left in play (every card should have a pair)" +
+                "\n∆ Play until there are no cards left in play (every card has a pair)" +
                 "\n∆ Whoever has the most pairs wins!" +
                 "\n∆ Have fun!" +
                 "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
-    public boolean hasCard(Player player, String card) {
+    // Returns true if a given player has a given suit of card
+    public boolean hasCard(Player player, String cardSuit) {
+        // Traverses over every card in player's hand
         for (int i = 0; i < player.getHand().size(); i++) {
-            if (card.equals(player.getHand().get(i).getSuit())) {
+            // If that card's suit equals the inputted suit, return true
+            if (cardSuit.equals(player.getHand().get(i).getSuit())) {
                 return true;
             }
         }
+        // Otherwise return false
         return false;
     }
 
-    public void removeCard(Player player, String card) {
+    // Removes a given suit of card from a given player
+    public void removeCard(Player player, String cardSuit) {
+        // Traverses over every card in player's hand
         for (int i = 0; i < player.getHand().size(); i++) {
-            if (player.getHand().get(i).getSuit().equals(card)) {
+            // If that card's suit equals the inputted suit, remove it
+            if (player.getHand().get(i).getSuit().equals(cardSuit)) {
                 player.getHand().remove(player.getHand().get(i));
             }
         }
     }
 
-    public static void removeInitialPairs(Player player) {
+    // Removes pairs from a given player's hand
+    public void removePairs(Player player) {
+        // Compare every card in player's hand to every other card
         for (int i = 0; i < player.getHand().size(); i++) {
             for (int j = 0; j < player.getHand().size(); j++) {
-                if (player.getHand().get(i).getSuit().equals(player.getHand().get(j).getSuit()) && i != j) {
+                String cardSuit1 = player.getHand().get(i).getSuit();
+                String cardSuit2 = player.getHand().get(j).getSuit();
+                // If any two cards have matching suits (and they aren't the same card)
+                if (cardSuit1.equals(cardSuit2) && i != j) {
+                    // Remove the pair
                     player.getHand().remove(player.getHand().get(i));
                     player.getHand().remove(player.getHand().get(j - 1));
+                    // Give player a point
                     player.addPoints(1);
-//                    i++;
-//                    j++;
                     break;
                 }
             }
         }
     }
 
+    // Prints the points of both players
     public void printPoints() {
         System.out.println("\n" + player1.getName() + "'s points: " + player1.getPoints());
         System.out.println(player2.getName() + "'s points: " + player2.getPoints() + "\n");
     }
 
+    // Checks for and prints winner of game
     public void printWinner() {
+        // If player1 has more points, print player1 wins
         if (player1.getPoints() > player2.getPoints()) {
             System.out.println(player1.getName() + " wins!");
         }
-        else if (player1.getPoints() == player2.getPoints()) {
-            System.out.println("It's a tie!");
-        }
+        // Otherwise print player2 wins
         else {
             System.out.println(player2.getName() + " wins!");
         }
     }
 
+    // Returns true if a given player has 0 cards in their hand
     public boolean hasEmptyHand(Player player) {
         if (player.getHand().isEmpty()) {
             return true;
@@ -109,133 +134,138 @@ public class Game {
         return false;
     }
 
-    public void dealNewHand(Player player) {
-        for (int i = 0; i < 5; i++) {
-            if (!deck.isEmpty()) {
-                player.getHand().add(deck.deal());
+    // Deals a card to a given player's hand
+    public void drawCard(Player player) {
+        // If the deck is not empty
+        if (!deck.isEmpty()) {
+            // Deal a card to player's hand
+            player.getHand().add(deck.deal());
+        }
+        // Remove any pairs that are made when cards are drawn
+        removePairs(player);
+    }
+
+    // Prints a given player's hand
+    public void printHand(Player player) {
+        // Prints the suits of every card in player's hand
+        for (int i = 0; i < player.getHand().size(); i++) {
+            System.out.println(player.getHand().get(i).getSuit());
+        }
+    }
+
+    // Prompts player for a guess (of a suit the other player might have)
+    // Returns the guess
+    public String promptGuess(Player player) {
+        // Initialize scanner
+        Scanner input = new Scanner(System.in);
+        // Prompts player for their move
+        System.out.print("\n" + player.getName() + "'s turn: Do you have a ");
+        // Stores their guess in a string variable
+        String guess = input.nextLine();
+        return guess;
+    }
+
+    // Makes sure each player has 5 cards at all times unless the deck is empty
+    public void fiveCardsInHand() {
+        // While the deck isn't empty and either player has less than 5 cards
+        while (player1.getHand().size() < 5 || player2.getHand().size() < 5 && !deck.isEmpty()) {
+            // If player1 has less than 5 cards
+            if (player1.getHand().size() < 5) {
+                // Deal a card to player1
+                drawCard(player1);
+            }
+            // If player2 has less than 5 cards
+            if (player2.getHand().size() < 5) {
+                // Deal a card to player2
+                drawCard(player2);
             }
         }
     }
 
-    public void drawCard(Player player) {
-        if (!deck.isEmpty()) {
-            player.getHand().add(deck.deal());
-        }
-    }
-
-    // Play Game Function
+    // Plays GoFish!
     public void playGame() {
-        // Print instructions
-        printInstructions();
-
         // Check for pairs in initial hands and remove them
-        removeInitialPairs(player1);
-        removeInitialPairs(player2);
+        removePairs(player1);
+        removePairs(player2);
+        // Make sure each player has 5 cards in hand to start
+        fiveCardsInHand();
 
         // Initialize a variable to keep track of who's turn it is
         int turn = 1;
+
         // While there are cards still in play (cards in the deck or in either players hand)
-        while (!(deck.isEmpty()) || !(player1.getHand().isEmpty()) || !(player2.getHand().isEmpty())) {
-            // If the turn it odd, it is player1's turn
+        while (!(deck.isEmpty()) || !(hasEmptyHand(player1)) || !(hasEmptyHand(player2))) {
+            // Before each turn print both player's points
+            printPoints();
+            // If the turn is odd, it is player1's turn
             if (turn % 2 == 1) {
-                // Print both players points
-                printPoints();
                 // Print player1's hand
-                for (int i = 0; i < player1.getHand().size(); i++) {
-                    System.out.println(player1.getHand().get(i).getSuit());
-                }
-                // Initialize scanner
-                Scanner input = new Scanner(System.in);
-                // Prompts player1 for their move
-                System.out.print("\n" + player1.getName() + "'s turn: Do you have a ");
-                // Stores their guess in a string variable
-                String guess = input.nextLine();
-                // If player2 has the guess, give a point to player1 and remove the pair from play
+                printHand(player1);
+                // Prompt player1 for their guess
+                String guess = promptGuess(player1);
+                // If player2 has the guess, give a point to player1 and remove the pair from the field of play
                 if (hasCard(player2, guess)) {
-                    // Player2 responds yes
                     System.out.println(player2.getName() + ": Yes");
                     // Add point to player1's score
                     player1.addPoints(1);
-                    // Remove card from player1's hand
+                    // Remove card from both hands
                     removeCard(player1, guess);
-                    // Remove card from player2's hand
                     removeCard(player2, guess);
-                    // Deal cards back to each player, so they still have 5 cards
+                    // Each player draws a card
                     drawCard(player1);
                     drawCard(player2);
-                    // Remove any pairs that are made when cards are drawn
-                    removeInitialPairs(player1);
-                    removeInitialPairs(player2);
                 // If player2 doesn't have the guess, player1 must draw a card
                 } else {
-                    // Player2 responds "go fish" indicating to draw a card
                     System.out.println(player2.getName() + ": Go Fish!");
-                    // While player1 has less than 5 cards, and the deck is not empty
-                    while (player1.getHand().size() < 5 && !deck.isEmpty()) {
-                        // Deal a card
-                        Card card = deck.deal();
-                        // If player1 already has that card
-                        if (hasCard(player1, card.getSuit())) {
-                            // Remove it and count it as a new pair
-                            removeCard(player1, card.getSuit());
-                            player1.addPoints(1);
-                        }
-                        // Otherwise, just add the card to their hand
-                        else {
-                            player1.getHand().add(card);
-                        }
-                    }
+                    // Player1 draws a card
+                    drawCard(player1);
                     // Go to next player's turn
                     turn++;
                 }
             }
+            // Otherwise the turn is even, so it's player2's turn
             else {
-                printPoints();
-                for (int i = 0; i < player2.getHand().size(); i++) {
-                    System.out.println(player2.getHand().get(i).getSuit());
-                }
-                Scanner input = new Scanner(System.in);
-                System.out.print("\n" + player2.getName() + "'s turn: Do you have a ");
-                String guess = input.nextLine();
+                // Print player2's hand
+                printHand(player2);
+                // Prompt player2 for their guess
+                String guess = promptGuess(player2);
+                // If player1 has the guess, give a point to player2 and remove the pair from the field of play
                 if (hasCard(player1, guess)) {
                     System.out.println(player1.getName() + ": Yes");
+                    // Add point to player2's score
                     player2.addPoints(1);
-                    // Remove card from player1's hand
+                    // Remove card from both hands
                     removeCard(player1, guess);
-                    // Remove card from player2's hand
                     removeCard(player2, guess);
+                    // Each player draws a card
                     drawCard(player1);
                     drawCard(player2);
-                    removeInitialPairs(player1);
-                    removeInitialPairs(player2);
                 }
+                // If player1 doesn't have the guess, player2 must draw a card
                 else {
                     System.out.println(player1.getName() + ": Go Fish!");
-                    // While player2 has less than 5 cards, and the deck is not empty
-                    while (player2.getHand().size() < 5 && !deck.isEmpty()) {
-                        // Deal a card
-                        Card card = deck.deal();
-                        // If player1 already has that card
-                        if (hasCard(player2, card.getSuit())) {
-                            // Remove it and count it as a new pair
-                            removeCard(player2, card.getSuit());
-                            player2.addPoints(1);
-                        }
-                        // Otherwise, just add the card to their hand
-                        else {
-                            player2.getHand().add(card);
-                        }
-                    }
+                    // Player2 draws a card
+                    drawCard(player2);
+                    // Go to next player's turn
                     turn++;
                 }
             }
+            // Print a break between each turn
             System.out.print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         }
+        // Print final points
+        printPoints();
+        // When all the cards are paired up, print the winner (player with more cards)
         printWinner();
     }
 
+    // Main
     public static void main(String[] args) {
+        // Print instructions
+        printInstructions();
+        // Create a new game
         Game game = new Game();
+        // Play game
         game.playGame();
     }
 }
