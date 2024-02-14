@@ -30,4 +30,18 @@ public class GameViewer extends JFrame {
         this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.setVisible(true);
     }
+
+    public void paint(Graphics g) {
+        g.setColor(Color.black);
+        g.drawString("Welcome to GoFish!", 200, 300);
+    }
+
+    // TODO
+    // Add a turn variable in Game (0 - intro, 1 - player1, 2 - player2)
+        // Abstraction: reduce repetitive code (look at feedback)
+    // Draw instructions (get window to show up)
+        // Check if turn is 0
+    // Create draw methods for card
+    // Have each hand draw itself based on turn
+    // Animations and repaint
 }
