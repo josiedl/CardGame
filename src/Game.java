@@ -10,6 +10,8 @@ public class Game {
     private Player player1;
     private Player player2;
     private Deck deck;
+    private int turn = 0;
+    private GameViewer window;
 
     // Constructor
     public Game() {
@@ -45,6 +47,8 @@ public class Game {
         // Create two players
         player1 = new Player(name1, hand1);
         player2 = new Player(name2, hand2);
+
+        window = new GameViewer(this);
     }
 
     // Prints the instructions for GoFish
@@ -62,6 +66,10 @@ public class Game {
                 "\n∆ Whoever has the most pairs wins!" +
                 "\n∆ Have fun!" +
                 "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    }
+
+    public int getTurn() {
+        return turn;
     }
 
     // Returns true if a given player has a given suit of card
@@ -184,14 +192,16 @@ public class Game {
 
     // Plays GoFish!
     public void playGame() {
+        window.repaint();
         // Check for pairs in initial hands and remove them
         removePairs(player1);
         removePairs(player2);
         // Make sure each player has 5 cards in hand to start
         fiveCardsInHand();
-
-        // Initialize a variable to keep track of who's turn it is
-        int turn = 1;
+        // Keep track of who's turn it is (starts with player 1)
+        turn = 1;
+        Player playerInTurn;
+        Player otherPlayer;
 
         // While there are cards still in play (cards in the deck or in either players hand)
         while (!(deck.isEmpty()) || !(hasEmptyHand(player1)) || !(hasEmptyHand(player2))) {
@@ -199,57 +209,94 @@ public class Game {
             printPoints();
             // If the turn is odd, it is player1's turn
             if (turn % 2 == 1) {
-                // Print player1's hand
-                printHand(player1);
-                // Prompt player1 for their guess
-                String guess = promptGuess(player1);
-                // If player2 has the guess, give a point to player1 and remove the pair from the field of play
-                if (hasCard(player2, guess)) {
-                    System.out.println(player2.getName() + ": Yes");
-                    // Add point to player1's score
-                    player1.addPoints(1);
-                    // Remove card from both hands
-                    removeCard(player1, guess);
-                    removeCard(player2, guess);
-                    // Each player draws a card
-                    drawCard(player1);
-                    drawCard(player2);
-                // If player2 doesn't have the guess, player1 must draw a card
-                } else {
-                    System.out.println(player2.getName() + ": Go Fish!");
-                    // Player1 draws a card
-                    drawCard(player1);
-                    // Go to next player's turn
-                    turn++;
-                }
+                playerInTurn = player1;
+                otherPlayer = player2;
             }
             // Otherwise the turn is even, so it's player2's turn
             else {
-                // Print player2's hand
-                printHand(player2);
-                // Prompt player2 for their guess
-                String guess = promptGuess(player2);
-                // If player1 has the guess, give a point to player2 and remove the pair from the field of play
-                if (hasCard(player1, guess)) {
-                    System.out.println(player1.getName() + ": Yes");
-                    // Add point to player2's score
-                    player2.addPoints(1);
-                    // Remove card from both hands
-                    removeCard(player1, guess);
-                    removeCard(player2, guess);
-                    // Each player draws a card
-                    drawCard(player1);
-                    drawCard(player2);
-                }
-                // If player1 doesn't have the guess, player2 must draw a card
-                else {
-                    System.out.println(player1.getName() + ": Go Fish!");
-                    // Player2 draws a card
-                    drawCard(player2);
-                    // Go to next player's turn
-                    turn++;
-                }
+                playerInTurn = player2;
+                otherPlayer = player1;
             }
+
+            // Print playerInTurn's hand
+            printHand(playerInTurn);
+            // Prompt playerInTurn for their guess
+            String guess = promptGuess(playerInTurn);
+            // If otherPlayer has the guess, give a point to playerInTurn and remove the pair from the field of play
+            if (hasCard(otherPlayer, guess)) {
+                System.out.println(otherPlayer.getName() + ": Yes");
+                // Add point to playerInTurn's score
+                playerInTurn.addPoints(1);
+                // Remove card from both hands
+                removeCard(playerInTurn, guess);
+                removeCard(otherPlayer, guess);
+                // Each player draws a card
+                drawCard(playerInTurn);
+                drawCard(otherPlayer);
+                // If otherPlayer doesn't have the guess, playerInTurn must draw a card
+            } else {
+                System.out.println(otherPlayer.getName() + ": Go Fish!");
+                // playerInTurn draws a card
+                drawCard(playerInTurn);
+                // Go to next player's turn
+                turn++;
+            }
+
+//            // If the turn is odd, it is player1's turn
+//            if (turn % 2 == 1) {
+//                // Print player1's hand
+//                printHand(player1);
+//                // Prompt player1 for their guess
+//                String guess = promptGuess(player1);
+//                // If player2 has the guess, give a point to player1 and remove the pair from the field of play
+//                if (hasCard(player2, guess)) {
+//                    System.out.println(player2.getName() + ": Yes");
+//                    // Add point to player1's score
+//                    player1.addPoints(1);
+//                    // Remove card from both hands
+//                    removeCard(player1, guess);
+//                    removeCard(player2, guess);
+//                    // Each player draws a card
+//                    drawCard(player1);
+//                    drawCard(player2);
+//                // If player2 doesn't have the guess, player1 must draw a card
+//                } else {
+//                    System.out.println(player2.getName() + ": Go Fish!");
+//                    // Player1 draws a card
+//                    drawCard(player1);
+//                    // Go to next player's turn
+//                    turn++;
+//                }
+//            }
+//            // Otherwise the turn is even, so it's player2's turn
+//            else {
+//                // Print player2's hand
+//                printHand(player2);
+//                // Prompt player2 for their guess
+//                String guess = promptGuess(player2);
+//                // If player1 has the guess, give a point to player2 and remove the pair from the field of play
+//                if (hasCard(player1, guess)) {
+//                    System.out.println(player1.getName() + ": Yes");
+//                    // Add point to player2's score
+//                    player2.addPoints(1);
+//                    // Remove card from both hands
+//                    removeCard(player1, guess);
+//                    removeCard(player2, guess);
+//                    // Each player draws a card
+//                    drawCard(player1);
+//                    drawCard(player2);
+//                }
+//                // If player1 doesn't have the guess, player2 must draw a card
+//                else {
+//                    System.out.println(player1.getName() + ": Go Fish!");
+//                    // Player2 draws a card
+//                    drawCard(player2);
+//                    // Go to next player's turn
+//                    turn++;
+//                }
+//            }
+
+
             // Print a break between each turn
             System.out.print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         }
