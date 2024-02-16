@@ -36,6 +36,10 @@ public class Deck {
         shuffle();
     }
 
+    public ArrayList<Card> getCards() {
+        return cards;
+    }
+
     // Returns true is there are no cards left in the deck
     public boolean isEmpty() {
         return cardsLeft == 0;

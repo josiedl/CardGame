@@ -7,14 +7,16 @@ public class Card {
     private String suit;
     private int point;
     private Image image;
+    private GameViewer window;
 
     // Constructor
     // Takes in a char, String, and int to initialize a card's values
-    public Card(char newRank, String newSuit, int newPoint, Image newImage) {
+    public Card(char newRank, String newSuit, int newPoint, Image newImage, GameViewer window) {
         rank = newRank;
         suit = newSuit;
         point = newPoint;
         image = newImage;
+        this.window = window;
     }
 
     // Returns the rank
@@ -50,5 +52,10 @@ public class Card {
     // Returns a string with the rank and suit of the card
     public String toString() {
         return rank + " of " + suit;
+    }
+
+    // Draws itself
+    public void draw(Graphics g) {
+        g.drawImage(this.image, 100, 100, window);
     }
 }

@@ -53,6 +53,10 @@ public class Game {
         player2 = new Player(name2, hand2);
     }
 
+    public Deck getDeck() {
+        return deck;
+    }
+
     // Prints the instructions for GoFish
     public static void printInstructions() {
         System.out.println("~~~~~~~~~~ How to Play GoFish ~~~~~~~~~~" +

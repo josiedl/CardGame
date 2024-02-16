@@ -61,6 +61,11 @@ public class GameViewer extends JFrame {
             g.setFont(new Font("Serif", Font.PLAIN, 30));
             g.drawString("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", 120, 570);
         }
+        else if (table.getTurn() == 1) {
+            for (int i = 0; i < table.getDeck().getCards().size(); i++) {
+                table.getDeck().getCards(i).draw();
+            }
+        }
     }
 
     // TODO
