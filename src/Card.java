@@ -1,16 +1,20 @@
+import java.awt.*;
+
 // Card class
 public class Card {
     // Declare instance variables
     private char rank;
     private String suit;
     private int point;
+    private Image image;
 
     // Constructor
     // Takes in a char, String, and int to initialize a card's values
-    public Card(char newRank, String newSuit, int newPoint) {
+    public Card(char newRank, String newSuit, int newPoint, Image newImage) {
         rank = newRank;
         suit = newSuit;
         point = newPoint;
+        image = newImage;
     }
 
     // Returns the rank

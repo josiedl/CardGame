@@ -24,8 +24,12 @@ public class Game {
                                     "flounder", "octopus"};
         // Initialize points array
         int[] points = {1, 1};
+
+        // Initialize GameViewer window
+        window = new GameViewer(this);
+
         // Create a new deck with the cards for GoFish
-        deck = new Deck(ranks, suits, points);
+        deck = new Deck(ranks, suits, points, window.getCards());
 
         // Prompt users for names
         Scanner input = new Scanner(System.in);
@@ -47,8 +51,6 @@ public class Game {
         // Create two players
         player1 = new Player(name1, hand1);
         player2 = new Player(name2, hand2);
-
-        window = new GameViewer(this);
     }
 
     // Prints the instructions for GoFish

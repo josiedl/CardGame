@@ -1,4 +1,5 @@
 // Import ArrayList and Math classes
+import java.awt.*;
 import java.util.ArrayList;
 import java.lang.Math;
 
@@ -10,15 +11,22 @@ public class Deck {
 
     // Constructor
     // Takes in an array of chars, strings, and ints and creates a card for each combination
-    public Deck(char[] ranks, String[] suits, int[] points) {
+    public Deck(char[] ranks, String[] suits, int[] points, Image[] images) {
         cards = new ArrayList<Card>();
         // Two is the number of suits and ranks
         // For each suit/rank
         for (int i = 0; i < 2; i++) {
             // For each suit
-            for (String suit : suits) {
+//            for (String suit : suits) {
+//                // Initialize a card
+//                Card newCard = new Card(ranks[i], suit, points[i]);
+//                // Add it to the deck
+//                cards.add(newCard);
+//                cardsLeft++;
+//            }
+            for (int j = 0; j < 13; j++) {
                 // Initialize a card
-                Card newCard = new Card(ranks[i], suit, points[i]);
+                Card newCard = new Card(ranks[i], suits[j], points[i], images[j]);
                 // Add it to the deck
                 cards.add(newCard);
                 cardsLeft++;
