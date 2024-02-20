@@ -31,6 +31,9 @@ public class Game {
         // Initialize points array
         int[] points = {1, 1};
 
+        // Initialize GameViewer window
+        window = new GameViewer(this);
+
         // Create a new deck with the cards for GoFish
         deck = new Deck(ranks, suits, points, window.getCards(), window);
 
@@ -62,9 +65,6 @@ public class Game {
         playerInTurn = player1;
         // It is not player2's turn to start
         otherPlayer = player2;
-
-        // Initialize GameViewer window
-        window = new GameViewer(this);
     }
 
     // Returns the player out of turn
