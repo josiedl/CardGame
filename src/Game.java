@@ -12,6 +12,12 @@ public class Game {
     private Deck deck;
     private int turn = 0;
     private GameViewer window;
+    private String winner;
+    private Player playerInTurn;
+    private Player otherPlayer;
+    // Magic numbers
+    private final int PLAYER1_YCARDS_COORDINATE = 100;
+    private final int PLAYER2_YCARDS_COORDINATE = 600;
 
     // Constructor
     public Game() {
@@ -29,7 +35,7 @@ public class Game {
         window = new GameViewer(this);
 
         // Create a new deck with the cards for GoFish
-        deck = new Deck(ranks, suits, points, window.getCards());
+        deck = new Deck(ranks, suits, points, window.getCards(), window);
 
         // Prompt users for names
         Scanner input = new Scanner(System.in);
@@ -49,10 +55,39 @@ public class Game {
         }
 
         // Create two players
-        player1 = new Player(name1, hand1);
-        player2 = new Player(name2, hand2);
+        player1 = new Player(name1, hand1, PLAYER1_YCARDS_COORDINATE);
+        player2 = new Player(name2, hand2, PLAYER2_YCARDS_COORDINATE); // make magic numbers
+
+        // Winner will be the name of the player who wins when the game is over
+        winner = "";
+
+        // It is player1's turn first
+        playerInTurn = player1;
+        // It is not player2's turn to start
+        otherPlayer = player2;
     }
 
+    // Returns the player out of turn
+    public Player getOtherPlayer() {
+        return otherPlayer;
+    }
+
+    // Returns the player in turn
+    public Player getPlayerInTurn() {
+        return playerInTurn;
+    }
+
+    // Returns player1
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    // Returns player2
+    public Player getPlayer2() {
+        return player2;
+    }
+
+    // Returns the deck
     public Deck getDeck() {
         return deck;
     }
@@ -74,6 +109,12 @@ public class Game {
                 "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
+    // Returns the winner
+    public String getWinner() {
+        return winner;
+    }
+
+    // Returns the turn
     public int getTurn() {
         return turn;
     }
@@ -132,12 +173,13 @@ public class Game {
     public void printWinner() {
         // If player1 has more points, print player1 wins
         if (player1.getPoints() > player2.getPoints()) {
-            System.out.println(player1.getName() + " wins!");
+            winner = player1.getName();
         }
         // Otherwise print player2 wins
         else {
-            System.out.println(player2.getName() + " wins!");
+            winner = player2.getName();
         }
+        System.out.println(winner + " wins!");
     }
 
     // Returns true if a given player has 0 cards in their hand
@@ -198,7 +240,6 @@ public class Game {
 
     // Plays GoFish!
     public void playGame() {
-        window.repaint();
         // Check for pairs in initial hands and remove them
         removePairs(player1);
         removePairs(player2);
@@ -206,11 +247,11 @@ public class Game {
         fiveCardsInHand();
         // Keep track of who's turn it is (starts with player 1)
         turn = 1;
-        Player playerInTurn;
-        Player otherPlayer;
 
         // While there are cards still in play (cards in the deck or in either players hand)
         while (!(deck.isEmpty()) || !(hasEmptyHand(player1)) || !(hasEmptyHand(player2))) {
+            // Repaint the window every turn
+            window.repaint();
             // Before each turn print both player's points
             printPoints();
             // If the turn is odd, it is player1's turn
@@ -247,62 +288,6 @@ public class Game {
                 // Go to next player's turn
                 turn++;
             }
-
-//            // If the turn is odd, it is player1's turn
-//            if (turn % 2 == 1) {
-//                // Print player1's hand
-//                printHand(player1);
-//                // Prompt player1 for their guess
-//                String guess = promptGuess(player1);
-//                // If player2 has the guess, give a point to player1 and remove the pair from the field of play
-//                if (hasCard(player2, guess)) {
-//                    System.out.println(player2.getName() + ": Yes");
-//                    // Add point to player1's score
-//                    player1.addPoints(1);
-//                    // Remove card from both hands
-//                    removeCard(player1, guess);
-//                    removeCard(player2, guess);
-//                    // Each player draws a card
-//                    drawCard(player1);
-//                    drawCard(player2);
-//                // If player2 doesn't have the guess, player1 must draw a card
-//                } else {
-//                    System.out.println(player2.getName() + ": Go Fish!");
-//                    // Player1 draws a card
-//                    drawCard(player1);
-//                    // Go to next player's turn
-//                    turn++;
-//                }
-//            }
-//            // Otherwise the turn is even, so it's player2's turn
-//            else {
-//                // Print player2's hand
-//                printHand(player2);
-//                // Prompt player2 for their guess
-//                String guess = promptGuess(player2);
-//                // If player1 has the guess, give a point to player2 and remove the pair from the field of play
-//                if (hasCard(player1, guess)) {
-//                    System.out.println(player1.getName() + ": Yes");
-//                    // Add point to player2's score
-//                    player2.addPoints(1);
-//                    // Remove card from both hands
-//                    removeCard(player1, guess);
-//                    removeCard(player2, guess);
-//                    // Each player draws a card
-//                    drawCard(player1);
-//                    drawCard(player2);
-//                }
-//                // If player1 doesn't have the guess, player2 must draw a card
-//                else {
-//                    System.out.println(player1.getName() + ": Go Fish!");
-//                    // Player2 draws a card
-//                    drawCard(player2);
-//                    // Go to next player's turn
-//                    turn++;
-//                }
-//            }
-
-
             // Print a break between each turn
             System.out.print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         }
@@ -310,6 +295,10 @@ public class Game {
         printPoints();
         // When all the cards are paired up, print the winner (player with more cards)
         printWinner();
+        // Set turn to 100 to trigger the endgame screen
+        turn = 100;
+        // Repaint the window to endgame screen
+        window.repaint();
     }
 
     // Main

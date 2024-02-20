@@ -8,9 +8,12 @@ public class Card {
     private int point;
     private Image image;
     private GameViewer window;
+    // Magic numbers
+    private final int CARD_WIDTH = 100;
+    private final int CARD_HEIGHT = 150;
 
     // Constructor
-    // Takes in a char, String, and int to initialize a card's values
+    // Takes in a char, String, int, image, and GameViewer to initialize a card's values
     public Card(char newRank, String newSuit, int newPoint, Image newImage, GameViewer window) {
         rank = newRank;
         suit = newSuit;
@@ -55,7 +58,7 @@ public class Card {
     }
 
     // Draws itself
-    public void draw(Graphics g) {
-        g.drawImage(this.image, 100, 100, window);
+    public void draw(Graphics g, int x, int y) {
+        g.drawImage(this.image, x, y, CARD_WIDTH, CARD_HEIGHT, window);
     }
 }

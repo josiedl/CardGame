@@ -8,25 +8,20 @@ public class Deck {
     // Declare instance variables
     private ArrayList<Card> cards;
     private int cardsLeft;
+    private GameViewer window;
 
     // Constructor
-    // Takes in an array of chars, strings, and ints and creates a card for each combination
-    public Deck(char[] ranks, String[] suits, int[] points, Image[] images) {
+    // Takes in an array of chars, strings, ints, and images, and creates a card for each combination. Also takes in a GameViewer.
+    public Deck(char[] ranks, String[] suits, int[] points, Image[] images, GameViewer window) {
         cards = new ArrayList<Card>();
+        this.window = window;
         // Two is the number of suits and ranks
         // For each suit/rank
         for (int i = 0; i < 2; i++) {
             // For each suit
-//            for (String suit : suits) {
-//                // Initialize a card
-//                Card newCard = new Card(ranks[i], suit, points[i]);
-//                // Add it to the deck
-//                cards.add(newCard);
-//                cardsLeft++;
-//            }
             for (int j = 0; j < 13; j++) {
-                // Initialize a card
-                Card newCard = new Card(ranks[i], suits[j], points[i], images[j]);
+                // Initialize a card with its respective image from images array
+                Card newCard = new Card(ranks[i], suits[j], points[i], images[j], this.window);
                 // Add it to the deck
                 cards.add(newCard);
                 cardsLeft++;
@@ -36,9 +31,6 @@ public class Deck {
         shuffle();
     }
 
-    public ArrayList<Card> getCards() {
-        return cards;
-    }
 
     // Returns true is there are no cards left in the deck
     public boolean isEmpty() {

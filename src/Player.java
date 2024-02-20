@@ -7,6 +7,8 @@ public class Player {
     private String name;
     private ArrayList<Card> hand;
     private int points;
+    // y is the y-coordinate for the position of the player's cards
+    private int yCards;
 
     // Constructors
     // Takes in name, sets points to 0
@@ -14,11 +16,17 @@ public class Player {
         this.name = name;
         points = 0;
     }
-    // Takes in name and hand, sets points to 0
-    public Player(String name, ArrayList<Card> hand) {
+    // Takes in name and hand and yCards, sets points to 0
+    public Player(String name, ArrayList<Card> hand, int yCards) {
         this.name = name;
         this.hand = hand;
         points = 0;
+        this.yCards = yCards;
+    }
+
+    // Returns y-coordinate of cards
+    public int getYCards() {
+        return yCards;
     }
 
     // Returns the name
