@@ -238,6 +238,33 @@ public class Game {
         }
     }
 
+    // Plays one turn of the playerInTurn
+    public void playOneTurn() {
+        // Print playerInTurn's hand
+        printHand(playerInTurn);
+        // Prompt playerInTurn for their guess
+        String guess = promptGuess(playerInTurn);
+        // If otherPlayer has the guess, give a point to playerInTurn and remove the pair from the field of play
+        if (hasCard(otherPlayer, guess)) {
+            System.out.println(otherPlayer.getName() + ": Yes");
+            // Add point to playerInTurn's score
+            playerInTurn.addPoints(1);
+            // Remove card from both hands
+            removeCard(playerInTurn, guess);
+            removeCard(otherPlayer, guess);
+            // Each player draws a card
+            drawCard(playerInTurn);
+            drawCard(otherPlayer);
+            // If otherPlayer doesn't have the guess, playerInTurn must draw a card
+        } else {
+            System.out.println(otherPlayer.getName() + ": Go Fish!");
+            // playerInTurn draws a card
+            drawCard(playerInTurn);
+            // Go to next player's turn
+            turn++;
+        }
+    }
+
     // Plays GoFish!
     public void playGame() {
         // Check for pairs in initial hands and remove them
@@ -264,30 +291,8 @@ public class Game {
                 playerInTurn = player2;
                 otherPlayer = player1;
             }
-
-            // Print playerInTurn's hand
-            printHand(playerInTurn);
-            // Prompt playerInTurn for their guess
-            String guess = promptGuess(playerInTurn);
-            // If otherPlayer has the guess, give a point to playerInTurn and remove the pair from the field of play
-            if (hasCard(otherPlayer, guess)) {
-                System.out.println(otherPlayer.getName() + ": Yes");
-                // Add point to playerInTurn's score
-                playerInTurn.addPoints(1);
-                // Remove card from both hands
-                removeCard(playerInTurn, guess);
-                removeCard(otherPlayer, guess);
-                // Each player draws a card
-                drawCard(playerInTurn);
-                drawCard(otherPlayer);
-                // If otherPlayer doesn't have the guess, playerInTurn must draw a card
-            } else {
-                System.out.println(otherPlayer.getName() + ": Go Fish!");
-                // playerInTurn draws a card
-                drawCard(playerInTurn);
-                // Go to next player's turn
-                turn++;
-            }
+            // Play one turn
+            playOneTurn();
             // Print a break between each turn
             System.out.print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         }
